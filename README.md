@@ -36,10 +36,11 @@ This Simple Todo app is a clean React todo app that lets you add, edit, complete
 * Local storage persistence
 
 ## Deployment (CRA + GitHub Pages)
-> Note: If you're on Node 17+, add `NODE_OPTIONS=--openssl-legacy-provider` (already included in `.env`).
+> Note: If you're on Node 17+, add `NODE_OPTIONS=--openssl-legacy-provider` (already included in the scripts).
 
 1. Install the deploy tool:
    * `npm install --save-dev gh-pages`
+   * or one-time: `npx gh-pages -d build`
 2. Add scripts in `package.json`:
    * `"predeploy": "npm run build"`
    * `"deploy": "gh-pages -d build"`
