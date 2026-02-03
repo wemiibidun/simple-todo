@@ -15,7 +15,7 @@
 * [Contact](#contact)
 
 ## Introduction
-Simple Todo is a clean React todo app that lets you add, edit, complete, and delete tasks. It saves your list locally so your tasks stay available between sessions.
+This Simple Todo app is a clean React todo app that lets you add, edit, complete, and delete tasks. It saves your list locally so your tasks stay available between sessions.
 
 ## Screenshot
 ![Simple Todo preview](public/preview.png)
