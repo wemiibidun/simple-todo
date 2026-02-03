@@ -1,95 +1,118 @@
-import React from 'react';
-import './App.css';
-import ListItems from './ListItems';
-import {library } from '@fortawesome/fontawesome-svg-core';
-import {faTrash} from '@fortawesome/free-solid-svg-icons';
+import React, { useEffect, useMemo, useState } from "react";
+import "./App.css";
+import ListItems from "./ListItems";
 
+const STORAGE_KEY = "simple-todo-items";
 
-library.add(faTrash);
-
-//creating class component
-class App extends React.Component{
-  constructor(props){
-    super(props);
-    this.state = {
-      items:[],
-      currentItem:{
-        text: '',
-        key: ''
-      }
+function App() {
+  const [items, setItems] = useState(() => {
+    try {
+      const stored = localStorage.getItem(STORAGE_KEY);
+      return stored ? JSON.parse(stored) : [];
+    } catch {
+      return [];
     }
-    this.handleInput = this.handleInput.bind(this);
-    this.addItem = this.addItem.bind(this);
-    this.deleteItem = this.deleteItem.bind(this);
-    this.setUpdate = this.setUpdate.bind(this); 
-  }
+  });
+  const [text, setText] = useState("");
 
-  //define methods
-  handleInput(e){
-    this.setState({
-      currentItem:{
-        text: e.target.value,
-        key: Date.now()
-      }
-    })
-  }
-    addItem(e){
-      e.preventDefault(); //prevent button from refreshing on every click
-      const newItem = this.state.currentItem;
-      if (newItem.text !==''){
-        const newItems = [...this.state.items, newItem];
-        this.setState({
-          items: newItems,
-          currentItem:{
-            text:'',
-            key: ''
-          }
-        })
-      }
-    }
+  useEffect(() => {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(items));
+  }, [items]);
 
-    deleteItem(key){
-      const filteredItems = this.state.items.filter(item => item.key !== key); //filter unmatched items
-      this.setState({
-        items: filteredItems 
-      })
-    }
+  const addItem = (event) => {
+    event.preventDefault();
+    const trimmed = text.trim();
+    if (!trimmed) return;
+    setItems((prev) => [
+      ...prev,
+      { id: Date.now().toString(), text: trimmed, completed: false },
+    ]);
+    setText("");
+  };
 
-    setUpdate(text, key){
-      const items = this.state.items;
-      items.map(item => {
-        if(item.key === key){
-          item.text = text; //check if the item is equal to the key function and change to text value
-        }
-      })
-      this.setState({
-        items: items
-      })
-    }
+  const deleteItem = (id) => {
+    setItems((prev) => prev.filter((item) => item.id !== id));
+  };
 
-  render(){
-    return(
-      <div className = 'App'>
-        <header>
-        <form id = 'todo_form' onSubmit = {this.addItem}>
-          <input type='text' placeholder = 'Enter List Items here' value = {this.state.currentItem.text} onChange = {this.handleInput}
-          
-          />
-          
-          <button type = 'submit'>Add</button>
-
-        </form>
-      </header>
-
-      <ListItems 
-      items = {this.state.items}  
-      deleteItem = {this.deleteItem}
-      setUpdate = {this.setUpdate}
-      />
-
-      </div>
+  const toggleItem = (id) => {
+    setItems((prev) =>
+      prev.map((item) =>
+        item.id === id ? { ...item, completed: !item.completed } : item
+      )
     );
-  }
+  };
+
+  const updateItem = (id, value) => {
+    setItems((prev) =>
+      prev.map((item) => (item.id === id ? { ...item, text: value } : item))
+    );
+  };
+
+  const clearCompleted = () => {
+    setItems((prev) => prev.filter((item) => !item.completed));
+  };
+
+  const stats = useMemo(() => {
+    const completed = items.filter((item) => item.completed).length;
+    return {
+      total: items.length,
+      completed,
+      remaining: items.length - completed,
+    };
+  }, [items]);
+
+  return (
+    <div className="app">
+      <div className="card">
+        <header className="header">
+          <div>
+            <p className="eyebrow">Simple Todo</p>
+            <h1>Stay on top of your tasks.</h1>
+            <p className="subtitle">
+              Add, edit, and complete tasks with automatic local saving.
+            </p>
+          </div>
+          <div className="stats">
+            <div>
+              <span>Total</span>
+              <strong>{stats.total}</strong>
+            </div>
+            <div>
+              <span>Remaining</span>
+              <strong>{stats.remaining}</strong>
+            </div>
+            <div>
+              <span>Done</span>
+              <strong>{stats.completed}</strong>
+            </div>
+          </div>
+        </header>
+
+        <form className="todo-form" onSubmit={addItem}>
+          <input
+            type="text"
+            value={text}
+            onChange={(event) => setText(event.target.value)}
+            placeholder="Add a new task"
+          />
+          <button type="submit">Add</button>
+        </form>
+
+        <ListItems
+          items={items}
+          deleteItem={deleteItem}
+          toggleItem={toggleItem}
+          updateItem={updateItem}
+        />
+
+        <div className="footer">
+          <button type="button" className="ghost" onClick={clearCompleted}>
+            Clear completed
+          </button>
+        </div>
+      </div>
+    </div>
+  );
 }
 
 export default App;

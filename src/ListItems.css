@@ -1,34 +1,78 @@
-.list{
-    color: #EEEEEE;
-    width: 300px;
-    background-color: #D7385E;
-    height: 50px;
-    margin: 20px auto;
-    border-radius: 5px;
-}
-.list p{
-    padding: 10px;
-    position: relative;
+.list-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
 }
 
-.list p span{
-    position: absolute;
-    right: 10px;
-    cursor: pointer;
+.list-item {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  gap: 12px;
+  align-items: center;
+  background: #f8fafc;
+  border-radius: 16px;
+  padding: 12px 14px;
 }
 
-.faicons{
-    margin: 0 5px;
-    font-size: 15px;
+.list-item input {
+  border: none;
+  background: transparent;
+  font-size: 1rem;
+  color: #0f172a;
 }
 
-.list p input{
-    background-color: transparent;
-    border: 0;
-    color: white;
-    font-size: 15px;
+.list-item input:focus {
+  outline: none;
 }
 
-.list p input:focus{
-    outline: none;
+.list-item input.done {
+  text-decoration: line-through;
+  color: #94a3b8;
+}
+
+.list-item button {
+  border: none;
+  background: transparent;
+  color: #ef4444;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.empty {
+  color: #94a3b8;
+  text-align: center;
+}
+
+.check {
+  display: grid;
+  place-items: center;
+}
+
+.check input {
+  appearance: none;
+  width: 18px;
+  height: 18px;
+  border-radius: 6px;
+  border: 2px solid #94d3cf;
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  background: white;
+}
+
+.check input:checked {
+  background: #0f766e;
+  border-color: #0f766e;
+}
+
+.check input:checked::after {
+  content: "";
+  width: 8px;
+  height: 8px;
+  border-radius: 2px;
+  background: white;
+}
+
+.check span {
+  display: none;
 }
